@@ -22,7 +22,9 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      - run: git clone https://github.com/AndrewKahr/Private-Repo-To-Build.git
+      - run: git status
+
+      - run: git rev-list --count HEAD
 
       - run: ls -lashi
           

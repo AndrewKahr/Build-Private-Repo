@@ -50,8 +50,8 @@ jobs:
       # - name: Set Current Build Time
       #   run: echo "BUILD_TIME=$()" >> $GITHUB_ENV
 
-      - name: Easy Zip Files
-        uses: vimtor/action-zip@v1
+      - uses: vimtor/action-zip@v1
+        with:
           files: build/
           dest: result.zip
 
@@ -61,6 +61,7 @@ jobs:
         with:
           name: my-artifact
           path: ${{ github.workspace }}/result.zip
+
 
   # buildForWindowsBasedPlatforms:
   #   name: Build for ${{ matrix.targetPlatform }} on Windows

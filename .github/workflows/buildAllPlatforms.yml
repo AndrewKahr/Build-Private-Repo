@@ -13,9 +13,24 @@ on:
     #     default: 6f55d08bbfe4d3baef2f8dd1cfafa077b39c5854
 
 jobs:
+  envVarSetup:
+    name: Setup Environment Variables
+    runs-on: ubuntu-latest
+    outputs:
+      GITHUB_SHA_SHORT: ${{ steps.envVars.outputs.GITHUB_SHA_SHORT }}
+      BUILD_TIME: ${{ steps.envVars.outputs.BUILD_TIME }}
+
+    steps:
+      - name: Set ENV Vars
+        id: envVars
+        run: |
+          echo "::set-output name=GITHUB_SHA_SHORT::$(echo $GITHUB_SHA | cut -c 1-6)"
+          echo "::set-output name=BUILD_TIME::$(date "+%m-%d-%y_%H-%M-%S")"
+
   buildForLinuxBasedPlatforms:
     name: Build for ${{ matrix.targetPlatform }} on Linux
     runs-on: ubuntu-latest
+    needs: envVarSetup
     strategy:
       fail-fast: false
       matrix:
@@ -48,22 +63,17 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           gitPrivateToken: ${{ secrets.ACCESS_TOKEN }}
           buildName: ${{ github.event.inputs.buildName }}
-      
-      - name: Set ENV Vars
-        run: |
-          echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
-          echo "BUILD_TIME=$(date "+%m-%d-%y_%H-%M-%S")" >> $GITHUB_ENV
 
       - uses: vimtor/action-zip@v1
         with:
           files: build/${{ matrix.targetPlatform }}/
-          dest: ${{ github.event.inputs.buildName }}_${{ env.BUILD_TIME }}_${{ env.GITHUB_SHA_SHORT }}.zip
+          dest: ${{ github.event.inputs.buildName }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip
 
       - name: Upload to gdrive
         uses: adityak74/google-drive-upload-git-action@main
         with:
           credentials: ${{ secrets.GC_TOKEN }}
-          filename: "${{ github.event.inputs.buildName }}_${{ env.BUILD_TIME }}_${{ env.GITHUB_SHA_SHORT }}.zip"
+          filename: "${{ github.event.inputs.buildName }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip"
           folderId: ${{ secrets.GD_FOLDER_ID }}
 
 

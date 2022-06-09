@@ -2,7 +2,11 @@ name: Build All Release Platforms
 
 on: 
   workflow_dispatch:
-    # inputs:
+    inputs:
+      buildName:
+        description: 'Name of executable'
+        required: true
+        default: 'Test Build'
     #   sha:
     #     description: 'sha of commit to build'
     #     required: true
@@ -43,6 +47,7 @@ jobs:
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
           gitPrivateToken: ${{ secrets.ACCESS_TOKEN }}
+          buildName: ${{ github.event.inputs.buildName }}
       
       - name: Set Git Short SHA
         run:  echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV

@@ -47,7 +47,7 @@ jobs:
             Library-${{ matrix.targetPlatform }}-
             Library-
             
-      - uses: game-ci/unity-builder@v2
+      - uses: AndrewKahr/unity-builder@PrivateGitCredential
         env:
           GITHUB_SHA: ${{ github.event.inputs.sha }}
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}

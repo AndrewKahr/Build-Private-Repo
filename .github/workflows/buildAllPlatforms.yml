@@ -90,6 +90,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          ref: '${{ github.event.inputs.ref }}'
           token: ${{ secrets.ACCESS_TOKEN }}
           repository: AndrewKahr/Private-Repo-To-Build
           fetch-depth: 0
@@ -139,6 +140,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          ref: '${{ github.event.inputs.ref }}'
           token: ${{ secrets.ACCESS_TOKEN }}
           repository: AndrewKahr/Private-Repo-To-Build
           fetch-depth: 0

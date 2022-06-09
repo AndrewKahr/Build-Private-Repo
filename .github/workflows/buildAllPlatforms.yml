@@ -67,92 +67,110 @@ jobs:
       - uses: vimtor/action-zip@v1
         with:
           files: build/${{ matrix.targetPlatform }}/
-          dest: ${{ github.event.inputs.buildName }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip
+          dest: ${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip
 
       - name: Upload to gdrive
         uses: adityak74/google-drive-upload-git-action@main
         with:
           credentials: ${{ secrets.GC_TOKEN }}
-          filename: "${{ github.event.inputs.buildName }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip"
+          filename: "${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip"
           folderId: ${{ secrets.GD_FOLDER_ID }}
 
 
-  # buildForWindowsBasedPlatforms:
-  #   name: Build for ${{ matrix.targetPlatform }} on Windows
-  #   runs-on: windows-2019
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       targetPlatform:
-  #         - StandaloneWindows64 # Build a Windows 64-bit standalone.
+  buildForWindowsBasedPlatforms:
+    name: Build for ${{ matrix.targetPlatform }} on Windows
+    runs-on: windows-2019
+    needs: envVarSetup
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
 
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         token: ${{ secrets.ACCESS_TOKEN }}
-  #         repository: AndrewKahr/Private-Repo-To-Build
-  #         fetch-depth: 0
-  #         lfs: true
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          repository: AndrewKahr/Private-Repo-To-Build
+          fetch-depth: 0
+          lfs: true
           
-  #     - uses: actions/cache@v2
-  #       with:
-  #         path: Library
-  #         key:
-  #           Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-  #         restore-keys: |
-  #           Library-${{ matrix.targetPlatform }}-
-  #           Library-
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key:
+            Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+            Library-
             
-  #     - uses: AndrewKahr/unity-builder@PrivateGitCredential
-  #       env:
-  #         UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-  #         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-  #         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-  #       with:
-  #         targetPlatform: ${{ matrix.targetPlatform }}
-  #         gitPrivateToken: ${{ secrets.ACCESS_TOKEN }}
+      - uses: AndrewKahr/unity-builder@PrivateGitCredential
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.ACCESS_TOKEN }}
+          buildName: ${{ github.event.inputs.buildName }}
           
-  #     - uses: actions/upload-artifact@v2
-  #       with:
-  #         name: Build
-  #         path: build
+      - uses: vimtor/action-zip@v1
+        with:
+          files: build/${{ matrix.targetPlatform }}/
+          dest: ${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip
 
-  # buildForMacOSBasedPlatforms:
-  #   name: Build for ${{ matrix.targetPlatform }} on Mac
-  #   runs-on: macos-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       targetPlatform:
-  #         - StandaloneOSX # Build a macOS standalone.
+      - name: Upload to gdrive
+        uses: adityak74/google-drive-upload-git-action@main
+        with:
+          credentials: ${{ secrets.GC_TOKEN }}
+          filename: "${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip"
+          folderId: ${{ secrets.GD_FOLDER_ID }}
 
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         token: ${{ secrets.ACCESS_TOKEN }}
-  #         repository: AndrewKahr/Private-Repo-To-Build
-  #         fetch-depth: 0
-  #         lfs: true
+  buildForMacOSBasedPlatforms:
+    name: Build for ${{ matrix.targetPlatform }} on Mac
+    runs-on: macos-latest
+    needs: envVarSetup
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneOSX # Build a macOS standalone.
 
-  #     - uses: actions/cache@v2
-  #       with:
-  #         path: Library
-  #         key:
-  #           Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-  #         restore-keys: |
-  #           Library-${{ matrix.targetPlatform }}-
-  #           Library-
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          repository: AndrewKahr/Private-Repo-To-Build
+          fetch-depth: 0
+          lfs: true
 
-  #     - uses: AndrewKahr/unity-builder@PrivateGitCredential
-  #       env:
-  #         UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-  #         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-  #         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-  #       with:
-  #         targetPlatform: ${{ matrix.targetPlatform }}
-  #         gitPrivateToken: ${{ secrets.ACCESS_TOKEN }}
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key:
+            Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+            Library-
 
-  #     - uses: actions/upload-artifact@v2
-  #       with:
-  #         name: Build
-  #         path: build
+      - uses: AndrewKahr/unity-builder@PrivateGitCredential
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.ACCESS_TOKEN }}
+          buildName: ${{ github.event.inputs.buildName }}
+
+      - uses: vimtor/action-zip@v1
+        with:
+          files: build/${{ matrix.targetPlatform }}/
+          dest: ${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip
+
+      - name: Upload to gdrive
+        uses: adityak74/google-drive-upload-git-action@main
+        with:
+          credentials: ${{ secrets.GC_TOKEN }}
+          filename: "${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip"
+          folderId: ${{ secrets.GD_FOLDER_ID }}

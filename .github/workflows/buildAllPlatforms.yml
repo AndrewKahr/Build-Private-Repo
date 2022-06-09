@@ -2,6 +2,7 @@ name: Build All Release Platforms
 
 on: 
   workflow_dispatch:
+  push:
 
 jobs:
   buildForLinuxBasedPlatforms:
@@ -20,6 +21,8 @@ jobs:
           repository: AndrewKahr/Private-Repo-To-Build
           fetch-depth: 0
           lfs: true
+
+      - run: git clone https://github.com/AndrewKahr/Private-Repo-To-Build.git
 
       - run: ls -lashi
           

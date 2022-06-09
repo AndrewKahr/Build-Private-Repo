@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       buildName:
-        description: 'Name of executable'
+        description: 'Name Of Executable. Should not contain spaces.'
         required: true
-        default: 'Test Build'
+        default: 'TestBuild'
     #   sha:
     #     description: 'sha of commit to build'
     #     required: true
@@ -52,20 +52,20 @@ jobs:
       - name: Set Git Short SHA
         run:  echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
 
-      # - name: Set Current Build Time
-      #   run: echo "BUILD_TIME=$()" >> $GITHUB_ENV
+      - name: Set Current Build Time
+         run: echo "BUILD_TIME=$(date "+%m-%d-%y_%H-%M-%S")" >> $GITHUB_ENV
 
       - uses: vimtor/action-zip@v1
         with:
-          files: build/
-          dest: result.zip
+          files: build/${{ matrix.targetPlatform }}/
+          dest: ${{ github.event.inputs.buildName }}_${{ env.BUILD_TIME }}_${{ env.GITHUB_SHA_SHORT }}.zip
 
       - run: ls -lashi
 
       - uses: actions/upload-artifact@v1
         with:
           name: my-artifact
-          path: ${{ github.workspace }}/result.zip
+          path: ${{ github.workspace }}/${{ github.event.inputs.buildName }}_${{ env.BUILD_TIME }}_${{ env.GITHUB_SHA_SHORT }}.zip
 
 
   # buildForWindowsBasedPlatforms:

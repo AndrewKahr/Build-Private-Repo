@@ -35,7 +35,7 @@ jobs:
       matrix:
         targetPlatform:
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
-          
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -69,12 +69,14 @@ jobs:
           files: build/${{ matrix.targetPlatform }}/
           dest: ${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip
 
-      - name: Upload to gdrive
-        uses: adityak74/google-drive-upload-git-action@main
+      - name: Upload To Digital Ocean
+        uses: BetaHuhn/do-spaces-action@v2
         with:
-          credentials: ${{ secrets.GC_TOKEN }}
-          filename: "${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip"
-          folderId: ${{ secrets.GD_FOLDER_ID }}
+          access_key: ${{ secrets.DO_ACCESS_TOKEN}}
+          secret_key: ${{ secrets.DO_SECRET_TOKEN }}
+          space_name: ${{ secrets.DO_SPACE_NAME }}
+          space_region: ${{ secrets.DO_SPACE_REGION }}
+          source: ${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip
 
 
   buildForWindowsBasedPlatforms:
@@ -120,12 +122,15 @@ jobs:
           files: build/${{ matrix.targetPlatform }}/
           dest: ${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip
 
-      - name: Upload to gdrive
-        uses: adityak74/google-drive-upload-git-action@main
+      - name: Upload To Digital Ocean
+        uses: BetaHuhn/do-spaces-action@v2
         with:
-          credentials: ${{ secrets.GC_TOKEN }}
-          filename: "${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip"
-          folderId: ${{ secrets.GD_FOLDER_ID }}
+          access_key: ${{ secrets.DO_ACCESS_TOKEN}}
+          secret_key: ${{ secrets.DO_SECRET_TOKEN }}
+          space_name: ${{ secrets.DO_SPACE_NAME }}
+          space_region: ${{ secrets.DO_SPACE_REGION }}
+          source: ${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip
+
 
   buildForMacOSBasedPlatforms:
     name: Build for ${{ matrix.targetPlatform }} on Mac
@@ -170,9 +175,11 @@ jobs:
           files: build/${{ matrix.targetPlatform }}/
           dest: ${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip
 
-      - name: Upload to gdrive
-        uses: adityak74/google-drive-upload-git-action@main
+      - name: Upload To Digital Ocean
+        uses: BetaHuhn/do-spaces-action@v2
         with:
-          credentials: ${{ secrets.GC_TOKEN }}
-          filename: "${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip"
-          folderId: ${{ secrets.GD_FOLDER_ID }}
+          access_key: ${{ secrets.DO_ACCESS_TOKEN}}
+          secret_key: ${{ secrets.DO_SECRET_TOKEN }}
+          space_name: ${{ secrets.DO_SPACE_NAME }}
+          space_region: ${{ secrets.DO_SPACE_REGION }}
+          source: ${{ github.event.inputs.buildName }}_${{ matrix.targetPlatform }}_${{ needs.envVarSetup.outputs.BUILD_TIME }}_${{ needs.envVarSetup.outputs.GITHUB_SHA_SHORT }}.zip

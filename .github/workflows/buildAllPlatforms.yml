@@ -60,12 +60,12 @@ jobs:
           files: build/${{ matrix.targetPlatform }}/
           dest: ${{ github.event.inputs.buildName }}_${{ env.BUILD_TIME }}_${{ env.GITHUB_SHA_SHORT }}.zip
 
-      - run: ls -lashi
-
-      - uses: actions/upload-artifact@v1
+      - name: Upload to gdrive
+        uses: adityak74/google-drive-upload-git-action@main
         with:
-          name: my-artifact
-          path: ${{ github.workspace }}/${{ github.event.inputs.buildName }}_${{ env.BUILD_TIME }}_${{ env.GITHUB_SHA_SHORT }}.zip
+          credentials: ${{ secrets.GC_TOKEN }}
+          filename: "${{ github.event.inputs.buildName }}_${{ env.BUILD_TIME }}_${{ env.GITHUB_SHA_SHORT }}.zip"
+          folderId: ${{ secrets.GD_FOLDER_ID }}
 
 
   # buildForWindowsBasedPlatforms:

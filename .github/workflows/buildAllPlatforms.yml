@@ -2,7 +2,11 @@ name: Build All Release Platforms
 
 on: 
   workflow_dispatch:
-  push:
+    inputs:
+      sha:
+        description: 'sha of commit to build'
+        required: true
+        default: 6f55d08bbfe4d3baef2f8dd1cfafa077b39c5854
 
 jobs:
   buildForLinuxBasedPlatforms:
@@ -39,6 +43,7 @@ jobs:
             
       - uses: game-ci/unity-builder@v2
         env:
+          GITHUB_SHA: ${{ github.event.inputs.sha }}
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}

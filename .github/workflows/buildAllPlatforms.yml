@@ -2,11 +2,11 @@ name: Build All Release Platforms
 
 on: 
   workflow_dispatch:
-    inputs:
-      sha:
-        description: 'sha of commit to build'
-        required: true
-        default: 6f55d08bbfe4d3baef2f8dd1cfafa077b39c5854
+    # inputs:
+    #   sha:
+    #     description: 'sha of commit to build'
+    #     required: true
+    #     default: 6f55d08bbfe4d3baef2f8dd1cfafa077b39c5854
 
 jobs:
   buildForLinuxBasedPlatforms:
@@ -26,18 +26,6 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      - run: git status
-
-      - run: git rev-list --count HEAD
-
-      - run: ls -lashi
-
-      - run: printenv
-
-      - run: export GITHUB_SHA=${{ github.event.inputs.sha }}
-      
-      - run: printenv
-
       - uses: actions/cache@v2
         with:
           path: Library
@@ -49,7 +37,6 @@ jobs:
             
       - uses: AndrewKahr/unity-builder@PrivateGitCredential
         env:
-          GITHUB_SHA: ${{ github.event.inputs.sha }}
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
@@ -62,82 +49,82 @@ jobs:
           name: Build
           path: build
 
-  # buildForWindowsBasedPlatforms:
-  #   name: Build for ${{ matrix.targetPlatform }} on Windows
-  #   runs-on: windows-2019
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       targetPlatform:
-  #         - StandaloneWindows64 # Build a Windows 64-bit standalone.
+  buildForWindowsBasedPlatforms:
+    name: Build for ${{ matrix.targetPlatform }} on Windows
+    runs-on: windows-2019
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
 
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         token: ${{ secrets.ACCESS_TOKEN }}
-  #         repository: AndrewKahr/Private-Repo-To-Build
-  #         fetch-depth: 0
-  #         lfs: true
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          repository: AndrewKahr/Private-Repo-To-Build
+          fetch-depth: 0
+          lfs: true
           
-  #     - uses: actions/cache@v2
-  #       with:
-  #         path: Library
-  #         key:
-  #           Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-  #         restore-keys: |
-  #           Library-${{ matrix.targetPlatform }}-
-  #           Library-
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key:
+            Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+            Library-
             
-  #     - uses: game-ci/unity-builder@v2
-  #       env:
-  #         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-  #         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-  #         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-  #       with:
-  #         targetPlatform: ${{ matrix.targetPlatform }}
-  #         gitPrivateToken: ${{ secrets.ACCESS_TOKEN }}
+      - uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.ACCESS_TOKEN }}
           
-  #     - uses: actions/upload-artifact@v2
-  #       with:
-  #         name: Build
-  #         path: build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: build
 
-  # buildForMacOSBasedPlatforms:
-  #   name: Build for ${{ matrix.targetPlatform }} on Mac
-  #   runs-on: macos-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       targetPlatform:
-  #         - StandaloneOSX # Build a macOS standalone.
+  buildForMacOSBasedPlatforms:
+    name: Build for ${{ matrix.targetPlatform }} on Mac
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneOSX # Build a macOS standalone.
 
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         token: ${{ secrets.ACCESS_TOKEN }}
-  #         repository: AndrewKahr/Private-Repo-To-Build
-  #         fetch-depth: 0
-  #         lfs: true
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          repository: AndrewKahr/Private-Repo-To-Build
+          fetch-depth: 0
+          lfs: true
 
-  #     - uses: actions/cache@v2
-  #       with:
-  #         path: Library
-  #         key:
-  #           Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-  #         restore-keys: |
-  #           Library-${{ matrix.targetPlatform }}-
-  #           Library-
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key:
+            Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+            Library-
 
-  #     - uses: game-ci/unity-builder@v2
-  #       env:
-  #         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-  #         UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-  #         UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-  #       with:
-  #         targetPlatform: ${{ matrix.targetPlatform }}
-  #         gitPrivateToken: ${{ secrets.ACCESS_TOKEN }}
+      - uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          gitPrivateToken: ${{ secrets.ACCESS_TOKEN }}
 
-  #     - uses: actions/upload-artifact@v2
-  #       with:
-  #         name: Build
-  #         path: build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: build

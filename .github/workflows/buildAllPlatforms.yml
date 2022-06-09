@@ -7,10 +7,9 @@ on:
         description: 'Name Of Executable. Should not contain spaces.'
         required: true
         default: 'TestBuild'
-    #   sha:
-    #     description: 'sha of commit to build'
-    #     required: true
-    #     default: 6f55d08bbfe4d3baef2f8dd1cfafa077b39c5854
+      ref:
+        description: 'What ref to checkout. Can be a branch name, tag, or SHA. Uses default branch if not specified'
+        required: false
 
 jobs:
   envVarSetup:
@@ -40,6 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          ref: '${{ github.event.inputs.ref }}'
           token: ${{ secrets.ACCESS_TOKEN }}
           repository: AndrewKahr/Private-Repo-To-Build
           fetch-depth: 0

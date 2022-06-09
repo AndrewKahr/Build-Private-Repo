@@ -49,11 +49,10 @@ jobs:
           gitPrivateToken: ${{ secrets.ACCESS_TOKEN }}
           buildName: ${{ github.event.inputs.buildName }}
       
-      - name: Set Git Short SHA
-        run:  echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
-
-      - name: Set Current Build Time
-        run: echo "BUILD_TIME=$(date "+%m-%d-%y_%H-%M-%S")" >> $GITHUB_ENV
+      - name: Set ENV Vars
+        run: |
+          echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+          echo "BUILD_TIME=$(date "+%m-%d-%y_%H-%M-%S")" >> $GITHUB_ENV
 
       - uses: vimtor/action-zip@v1
         with:

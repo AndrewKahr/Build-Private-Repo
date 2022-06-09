@@ -31,7 +31,13 @@ jobs:
       - run: git rev-list --count HEAD
 
       - run: ls -lashi
-          
+
+      - run: printenv
+
+      - run: export GITHUB_SHA=${{ github.event.inputs.sha }}
+      
+      - run: printenv
+
       - uses: actions/cache@v2
         with:
           path: Library
